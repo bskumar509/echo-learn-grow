@@ -1,11 +1,33 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Navbar from "@/components/Navbar";
+import HeroSection from "@/components/HeroSection";
+import FeaturesSection from "@/components/FeaturesSection";
+import CoursesSection from "@/components/CoursesSection";
+import DashboardPreview from "@/components/DashboardPreview";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { MessageCircle } from "lucide-react";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <main>
+        <HeroSection />
+        <FeaturesSection />
+        <CoursesSection />
+        <DashboardPreview />
+      </main>
+      <Footer />
+      
+      {/* Floating Support Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button 
+          variant="hero" 
+          size="icon"
+          className="w-14 h-14 rounded-full shadow-xl hover:scale-110 transition-transform"
+        >
+          <MessageCircle className="w-6 h-6" />
+        </Button>
       </div>
     </div>
   );
