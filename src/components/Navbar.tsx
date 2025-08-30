@@ -7,20 +7,47 @@ import {
   Library,
   BarChart3,
   LogIn,
-  UserPlus
+  UserPlus,
+  ChevronDown,
+  GraduationCap,
+  Video,
+  Calendar,
+  HelpCircle,
+  Info
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
+    { label: "About", icon: Info, href: "/about" },
     { label: "Courses", icon: BookOpen, href: "/courses" },
-    { label: "Dashboard", icon: BarChart3, href: "/dashboard" },
-    { label: "Community", icon: Users, href: "/community" },
-    { label: "Resources", icon: Library, href: "/resources" },
+    { label: "Virtual Classroom", icon: Video, href: "/virtual-classroom" },
+    { label: "Library", icon: Library, href: "/content-library" },
+    { label: "Curriculum", icon: GraduationCap, href: "/curriculum" },
+  ];
+
+  const dashboardItems = [
+    { label: "Student Dashboard", href: "/dashboard/student" },
+    { label: "Teacher Dashboard", href: "/dashboard/teacher" },
+    { label: "Parent Dashboard", href: "/dashboard/parent" },
+  ];
+
+  const moreItems = [
     { label: "Achievements", icon: Trophy, href: "/achievements" },
+    { label: "Assignments", icon: Calendar, href: "/assignments" },
+    { label: "Blog", icon: BookOpen, href: "/blog" },
+    { label: "Support", icon: HelpCircle, href: "/support" },
+    { label: "Contact", icon: Users, href: "/contact" },
   ];
 
   return (
@@ -47,18 +74,65 @@ const Navbar = () => {
                 <span>{item.label}</span>
               </Link>
             ))}
+            
+            {/* Dashboard Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center space-x-1 text-muted-foreground hover:text-primary transition-colors">
+                <BarChart3 className="w-4 h-4" />
+                <span>Dashboard</span>
+                <ChevronDown className="w-3 h-3" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {dashboardItems.map((item) => (
+                  <DropdownMenuItem key={item.label} asChild>
+                    <Link to={item.href}>
+                      {item.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* More Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center space-x-1 text-muted-foreground hover:text-primary transition-colors">
+                <span>More</span>
+                <ChevronDown className="w-3 h-3" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {moreItems.map((item) => (
+                  <DropdownMenuItem key={item.label} asChild>
+                    <Link to={item.href} className="flex items-center space-x-2">
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/feedback">Feedback</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/accessibility">Accessibility</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            <Button variant="ghost" size="sm">
-              <LogIn className="w-4 h-4 mr-2" />
-              Login
-            </Button>
-            <Button variant="hero" size="sm">
-              <UserPlus className="w-4 h-4 mr-2" />
-              Sign Up
-            </Button>
+            <Link to="/auth">
+              <Button variant="ghost" size="sm">
+                <LogIn className="w-4 h-4 mr-2" />
+                Login
+              </Button>
+            </Link>
+            <Link to="/auth">
+              <Button variant="hero" size="sm">
+                <UserPlus className="w-4 h-4 mr-2" />
+                Sign Up
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -78,20 +152,58 @@ const Navbar = () => {
                 key={item.label}
                 to={item.href}
                 className="flex items-center space-x-2 px-4 py-2 text-muted-foreground hover:text-primary hover:bg-muted rounded-lg transition-all"
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 <item.icon className="w-4 h-4" />
                 <span>{item.label}</span>
               </Link>
             ))}
-            <div className="flex flex-col space-y-2 px-4 pt-2">
-              <Button variant="outline" size="sm" className="w-full">
-                <LogIn className="w-4 h-4 mr-2" />
-                Login
-              </Button>
-              <Button variant="hero" size="sm" className="w-full">
-                <UserPlus className="w-4 h-4 mr-2" />
-                Sign Up
-              </Button>
+            
+            {/* Dashboard Section */}
+            <div className="px-4 py-2">
+              <p className="text-xs font-semibold text-muted-foreground mb-2">DASHBOARDS</p>
+              {dashboardItems.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  className="flex items-center space-x-2 px-2 py-2 text-muted-foreground hover:text-primary hover:bg-muted rounded-lg transition-all"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  <span className="text-sm">{item.label}</span>
+                </Link>
+              ))}
+            </div>
+
+            {/* More Section */}
+            <div className="px-4 py-2">
+              <p className="text-xs font-semibold text-muted-foreground mb-2">MORE</p>
+              {moreItems.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  className="flex items-center space-x-2 px-2 py-2 text-muted-foreground hover:text-primary hover:bg-muted rounded-lg transition-all"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <item.icon className="w-4 h-4" />
+                  <span className="text-sm">{item.label}</span>
+                </Link>
+              ))}
+            </div>
+
+            <div className="flex flex-col space-y-2 px-4 pt-2 border-t border-border">
+              <Link to="/auth">
+                <Button variant="outline" size="sm" className="w-full">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Login
+                </Button>
+              </Link>
+              <Link to="/auth">
+                <Button variant="hero" size="sm" className="w-full">
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Sign Up
+                </Button>
+              </Link>
             </div>
           </div>
         )}
