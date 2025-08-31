@@ -26,6 +26,15 @@ import Achievements from "./pages/Achievements";
 import MobileApp from "./pages/MobileApp";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import HowItWorks from "./pages/HowItWorks";
+import Features from "./pages/Features";
+import Pricing from "./pages/Pricing";
+import Testimonials from "./pages/Testimonials";
+import StudyMaterials from "./pages/StudyMaterials";
+import CommunityForum from "./pages/CommunityForum";
+import HelpCenter from "./pages/HelpCenter";
+import Careers from "./pages/Careers";
+import Partners from "./pages/Partners";
 
 const queryClient = new QueryClient();
 
