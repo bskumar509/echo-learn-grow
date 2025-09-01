@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,9 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Loader2, GraduationCap } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const { user, userRole, signIn, signUp } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -19,52 +20,32 @@ const Auth = () => {
   const [name, setName] = useState("");
   const [role, setRole] = useState<"student" | "parent" | "teacher">("student");
 
+  useEffect(() => {
+    // Redirect if already authenticated
+    if (user && userRole) {
+      const dashboardRoutes: Record<string, string> = {
+        student: '/student-dashboard',
+        teacher: '/teacher-dashboard',
+        parent: '/parent-dashboard',
+        admin: '/admin-dashboard',
+      };
+      navigate(dashboardRoutes[userRole] || '/');
+    }
+  }, [user, userRole, navigate]);
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Sign up the user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name: name,
-            role: role,
-          },
-        },
+      const { error } = await signUp(email, password, name, role);
+
+      if (error) throw error;
+
+      toast({
+        title: "Account created successfully!",
+        description: "Please check your email to verify your account.",
       });
-
-      if (authError) throw authError;
-
-      if (authData.user) {
-        // Create user role
-        const { error: roleError } = await supabase
-          .from("user_roles")
-          .insert({
-            user_id: authData.user.id,
-            role: role,
-          });
-
-        if (roleError) throw roleError;
-
-        // Create user stats for students
-        if (role === "student") {
-          const { error: statsError } = await supabase
-            .from("user_stats")
-            .insert({
-              user_id: authData.user.id,
-            });
-
-          if (statsError) throw statsError;
-        }
-
-        toast({
-          title: "Account created successfully!",
-          description: "Please check your email to verify your account.",
-        });
-      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -81,42 +62,14 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { error } = await signIn(email, password);
 
       if (error) throw error;
 
-      if (data.user) {
-        // Get user role
-        const { data: roleData } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", data.user.id)
-          .single();
-
-        if (roleData) {
-          // Navigate based on role
-          switch (roleData.role) {
-            case "teacher":
-              navigate("/teacher-dashboard");
-              break;
-            case "parent":
-              navigate("/parent-dashboard");
-              break;
-            default:
-              navigate("/student-dashboard");
-          }
-        } else {
-          navigate("/");
-        }
-
-        toast({
-          title: "Welcome back!",
-          description: "You have successfully signed in.",
-        });
-      }
+      toast({
+        title: "Welcome back!",
+        description: "You have successfully signed in.",
+      });
     } catch (error: any) {
       toast({
         title: "Error",

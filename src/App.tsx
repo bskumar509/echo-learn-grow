@@ -3,6 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
@@ -44,35 +46,81 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/courses" element={<Courses />} />
-          <Route path="/virtual-classroom" element={<VirtualClassroom />} />
-          <Route path="/content-library" element={<ContentLibrary />} />
-          <Route path="/curriculum" element={<Curriculum />} />
-          <Route path="/assignments" element={<Assignments />} />
-          <Route path="/support" element={<Support />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/accessibility" element={<Accessibility />} />
-          <Route path="/feedback" element={<Feedback />} />
-          <Route path="/achievements" element={<Achievements />} />
-          <Route path="/mobile-app" element={<MobileApp />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          
-          {/* Dashboard Routes */}
-          <Route path="/dashboard/student" element={<StudentDashboard />} />
-          <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
-          <Route path="/dashboard/parent" element={<ParentDashboard />} />
-          <Route path="/teacher-panel" element={<TeacherPanel />} />
-          <Route path="/parent-portal" element={<ParentPortal />} />
-          
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/study-materials" element={<StudyMaterials />} />
+            <Route path="/community-forum" element={<CommunityForum />} />
+            <Route path="/help-center" element={<HelpCenter />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/partners" element={<Partners />} />
+            <Route path="/virtual-classroom" element={<VirtualClassroom />} />
+            <Route path="/content-library" element={<ContentLibrary />} />
+            <Route path="/curriculum" element={<Curriculum />} />
+            <Route path="/assignments" element={<Assignments />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/accessibility" element={<Accessibility />} />
+            <Route path="/feedback" element={<Feedback />} />
+            <Route path="/achievements" element={<Achievements />} />
+            <Route path="/mobile-app" element={<MobileApp />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            
+            {/* Protected Dashboard Routes */}
+            <Route 
+              path="/student-dashboard" 
+              element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <StudentDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/teacher-dashboard" 
+              element={
+                <ProtectedRoute allowedRoles={['teacher']}>
+                  <TeacherDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/parent-dashboard" 
+              element={
+                <ProtectedRoute allowedRoles={['parent']}>
+                  <ParentDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/teacher-panel" 
+              element={
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
+                  <TeacherPanel />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/parent-portal" 
+              element={
+                <ProtectedRoute allowedRoles={['parent']}>
+                  <ParentPortal />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

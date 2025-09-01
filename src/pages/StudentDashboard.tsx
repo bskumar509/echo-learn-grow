@@ -13,32 +13,26 @@ import PointsTracker from "@/components/gamification/PointsTracker";
 import Leaderboard from "@/components/gamification/Leaderboard";
 import WeeklyChallenges from "@/components/gamification/WeeklyChallenges";
 import LevelProgress from "@/components/gamification/LevelProgress";
+import { useAuth } from "@/contexts/AuthContext";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<any>(null);
+  const { user, signOut } = useAuth();
   const [userStats, setUserStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [courses, setCourses] = useState<any[]>([]);
   const [upcomingTasks, setUpcomingTasks] = useState<any[]>([]);
 
   useEffect(() => {
-    checkAuth();
-    fetchDashboardData();
-  }, []);
-
-  const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       navigate("/auth");
       return;
     }
-    setUser(user);
-  };
+    fetchDashboardData();
+  }, [user, navigate]);
 
   const fetchDashboardData = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       // Fetch user stats
@@ -77,8 +71,7 @@ const StudentDashboard = () => {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/");
+    await signOut();
   };
 
   if (loading) {
